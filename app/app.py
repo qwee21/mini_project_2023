@@ -94,25 +94,32 @@ class App(design.Ui_MainWindow, QMainWindow):
 
     def itog_cost(self):
         self.data = []
+
         for row in range(self.table_travel.rowCount()):
             total = 0
+            has_negative_value = False
+
             for col in range(1, 5):
                 item_widget = self.table_travel.cellWidget(row, col)
                 if item_widget:
                     value = item_widget.text().replace(",", ".")
-                    if value: #проверка на пустую строку
+
+                    if value:  # проверка на пустую строку
                         if "-" not in value:
                             total += float(value)
                         else:
-                            QMessageBox.warning(self, "Ошибка", "Вы ввели отрицательное число")
+                            has_negative_value = True
+
+            if has_negative_value:
+                QMessageBox.warning(self, "Ошибка", "Вы ввели отрицательное число")
+                break
 
             if total != 0 and self.table_travel.cellWidget(row, 0).text() != "":
-
                 self.table_travel.setColumnCount(6)
                 self.table_travel.setHorizontalHeaderItem(5, QTableWidgetItem("Итог"))
 
                 total_item = QLineEdit()
-                total_item.setText(str(total).replace(".",","))
+                total_item.setText(str(total).replace(".", ","))
                 total_item.setReadOnly(True)
 
                 self.table_travel.setCellWidget(row, 5, total_item)
